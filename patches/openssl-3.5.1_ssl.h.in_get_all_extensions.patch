@@ -1,0 +1,16 @@
+Index: include/openssl/ssl.h.in
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/include/openssl/ssl.h.in b/include/openssl/ssl.h.in
+--- a/include/openssl/ssl.h.in	(revision aea7aaf2abb04789f5868cbabec406ea43aa84bf)
++++ b/include/openssl/ssl.h.in	(revision 036c6f01d1ee54a8e0906d99bd6bfd1835b3db26)
+@@ -1919,6 +1919,7 @@
+ size_t SSL_client_hello_get0_ciphers(SSL *s, const unsigned char **out);
+ size_t SSL_client_hello_get0_compression_methods(SSL *s,
+                                                  const unsigned char **out);
++int SSL_client_hello_getall_extensions_present(SSL *s, int **out, size_t *outlen);
+ int SSL_client_hello_get1_extensions_present(SSL *s, int **out, size_t *outlen);
+ int SSL_client_hello_get_extension_order(SSL *s, uint16_t *exts,
+                                          size_t *num_exts);
