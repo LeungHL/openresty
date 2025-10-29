@@ -20,6 +20,9 @@ cd ../..
 
 cd objs/lib/$OPENSSL || exit 1
 patch -p1 < ../../../patches/openssl-3.5.0-sess_set_get_cb_yield.patch || exit 1
+patch -p1 < ../../../patches/openssl-3.5.1_ssl.h.in_get_all_extensions.patch || exit 1
+patch -p1 < ../../../patches/openssl-3.5.1_ssl_lib_get_all_extensions.patch || exit 1
+
 cd ../../..
 
     #--with-openssl-opt="no-asm" \
@@ -28,6 +31,7 @@ cd ../../..
     --with-cc=gcc \
     --prefix= \
     --with-cc-opt='-DFD_SETSIZE=1024' \
+    --add-module=./ja4-nginx-module/src \
     --sbin-path=nginx.exe \
     --with-pcre-jit \
     --without-http_rds_json_module \

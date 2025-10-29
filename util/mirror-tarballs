@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+OPENSSL=openssl-3.5.1
+
+if [ ! -f $OPENSSL.tar.gz ]; then wget -O $OPENSSL.tar.gz https://github.com/openssl/openssl/releases/download/$OPENSSL/$OPENSSL.tar.gz; fi
+
 #root=$(readlink -f -- "$(dirname -- "$0")/..")
 root=`perl -MCwd -e'print Cwd::abs_path(shift)' $(dirname -- "$0")/..`
 
@@ -550,6 +554,21 @@ echo "$info_txt applying the reuseport_close_unused_fds patch for nginx"
 patch -p1 < $root/patches/nginx-$main_ver-reuseport_close_unused_fds.patch || exit 1
 echo
 
+# apply ja4 patch
+echo "$info_txt applying the ngx_event_openssl.c_ja4 patch for nginx"
+patch -p1 < $root/patches/nginx-$main_ver-ngx_event_openssl.c_ja4.patch || exit 1
+echo
+echo "$info_txt applying the ngx_event_openssl.c_ja4 patch for nginx"
+patch -p1 < $root/patches/nginx-$main_ver-ngx_event_openssl.h_ja4.patch || exit 1
+echo
+echo "$info_txt applying the ngx_event_openssl.c_ja4 patch for nginx"
+patch -p1 < $root/patches/nginx-$main_ver-ngx_http_ssl_module.c_ja4.patch || exit 1
+echo
+
+if [ -d ../ja4-nginx-module ]; then
+  rm -rf ja4-nginx-module
+fi
+git clone https://github.com/LeungHL/ja4-nginx-module.git
 
 answer=`$root/util/ver-ge "$main_ver" 1.19.9`
 if [ "$answer" = "Y" ]; then
@@ -968,6 +987,14 @@ perl bundle/$resty_cli/bin/md2pod.pl $root/doc/README-windows.md | pod2text > RE
 unix2dos README-windows.txt || exit 1
 mkdir patches/ || exit 1
 cp $root/patches/openssl-*.patch patches/ || exit 1
+
+# download openssl source and patch
+if [ ! -f ../$OPENSSL.tar.gz ]; then wget -O ../$OPENSSL.tar.gz https://github.com/openssl/openssl/releases/download/$OPENSSL/$OPENSSL.tar.gz; fi
+tar -xf ../$OPENSSL.tar.gz || exit 1
+cd $OPENSSL
+patch -p1 < ../patches/openssl-3.5.1_ssl.h.in_get_all_extensions.patch || exit 1
+patch -p1 < ../patches/openssl-3.5.1_ssl_lib_get_all_extensions.patch || exit 1
+cd ../
 
 restydoc_index=$bundle_dir/$resty_cli/bin/restydoc-index
 #restydoc_index=echo
